@@ -1,7 +1,8 @@
 // app/api/render/route.ts
-import { spawn } from "child_process";
-import fsPromises from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
+import { spawn } from "child_process";
+import fs from "fs";
+import fsPromises from "fs/promises";
 import os from "os";
 import path from "path";
 
@@ -14,11 +15,15 @@ function runRenderScript(
   outPath: string,
   durationInSeconds: number
 ): Promise<void> {
+  // 🔑 Use an absolute path to render.mjs so Turbopack doesn't try to "resolve" it as a module
+  const scriptPath = path.join(process.cwd(), "render.mjs");
+
   return new Promise((resolve, reject) => {
     const child = spawn(
-      "node",
+      // use the current Node executable
+      process.execPath,
       [
-        "render.mjs",
+        scriptPath,
         videoPath,
         captionsPath,
         stylePreset,
@@ -55,8 +60,9 @@ export async function POST(req: NextRequest) {
     const captionsStr = formData.get("captions") as string | null;
     const stylePreset =
       (formData.get("stylePreset") as string | null) ?? "bottom";
-    const durationStr = formData.get("durationInSeconds") as string | null; // 👈 NEW
-    const durationInSeconds = durationStr ? Number(durationStr) : null;
+    const durationStr = formData.get("durationInSeconds") as string | null;
+    const durationInSeconds = durationStr ? Number(durationStr) : 0;
+
     if (!file) {
       return NextResponse.json(
         { success: false, error: "No file provided" },
@@ -72,7 +78,6 @@ export async function POST(req: NextRequest) {
 
     const captions = JSON.parse(captionsStr);
 
-    // temp paths
     const tmpDir = os.tmpdir();
     const id = Date.now().toString();
 
@@ -80,27 +85,27 @@ export async function POST(req: NextRequest) {
     const captionsPath = path.join(tmpDir, `captions-${id}.json`);
     const outPath = path.join(tmpDir, `captioned-${id}.mp4`);
 
-    // write video file
+    // write uploaded video to temp
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     await fsPromises.writeFile(videoPath, buffer);
 
-    // write captions json
+    // write captions JSON
     await fsPromises.writeFile(captionsPath, JSON.stringify(captions));
 
-    // call render.mjs
+    // run render.mjs
     await runRenderScript(
       videoPath,
       captionsPath,
       stylePreset,
       outPath,
-      durationInSeconds ?? 0
+      durationInSeconds
     );
 
-    // read output mp4
+    // read rendered mp4
     const videoBuffer = await fsPromises.readFile(outPath);
 
-    // cleanup (best-effort)
+    // best-effort cleanup
     fsPromises.unlink(videoPath).catch(() => {});
     fsPromises.unlink(captionsPath).catch(() => {});
     fsPromises.unlink(outPath).catch(() => {});
