@@ -29,8 +29,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-app:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-app:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/remotion-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/remotion-app:${{ github.sha }}
 
       - name: Image digest
         run: echo "Image published successfully"
