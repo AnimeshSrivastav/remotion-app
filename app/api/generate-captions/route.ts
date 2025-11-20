@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI, { toFile } from "openai";
 
+export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const openai = new OpenAI({

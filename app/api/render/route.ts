@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import os from "os";
 import path from "path";
 
+export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 function runRenderScript(
