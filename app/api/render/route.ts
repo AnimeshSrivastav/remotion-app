@@ -15,7 +15,7 @@ function runRenderScript(
   durationInSeconds: number
 ): Promise<void> {
   const scriptPath = path.join(process.cwd(), "render.mjs");
-
+  console.log("Using render script:", scriptPath);
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
