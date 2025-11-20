@@ -8,6 +8,10 @@ COPY package*.json ./
 RUN npm ci
 
 FROM base AS build
+
+ARG OPENAI_API_KEY
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
+
 WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
@@ -16,6 +20,7 @@ RUN npm run build
 FROM node:20-bookworm-slim AS runner
 
 ENV NODE_ENV=production
+
 
 WORKDIR /usr/src/app
 
