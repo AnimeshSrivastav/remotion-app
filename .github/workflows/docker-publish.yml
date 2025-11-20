@@ -28,6 +28,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          build-args: |
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/remotion-app:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/remotion-app:${{ github.sha }}

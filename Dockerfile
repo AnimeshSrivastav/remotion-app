@@ -9,6 +9,10 @@ RUN npm ci --only=production
 
 
 FROM base AS build
+
+ARG OPENAI_API_KEY
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
+
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 RUN npm run build
