@@ -1,8 +1,6 @@
-// app/api/render/route.ts
-import { NextRequest, NextResponse } from "next/server";
 import { spawn } from "child_process";
-import fs from "fs";
 import fsPromises from "fs/promises";
+import { NextRequest, NextResponse } from "next/server";
 import os from "os";
 import path from "path";
 
@@ -15,12 +13,10 @@ function runRenderScript(
   outPath: string,
   durationInSeconds: number
 ): Promise<void> {
-  // 🔑 Use an absolute path to render.mjs so Turbopack doesn't try to "resolve" it as a module
   const scriptPath = path.join(process.cwd(), "render.mjs");
 
   return new Promise((resolve, reject) => {
     const child = spawn(
-      // use the current Node executable
       process.execPath,
       [
         scriptPath,
@@ -37,10 +33,6 @@ function runRenderScript(
 
     child.stdout.on("data", (data) => {
       console.log("[render.mjs stdout]", data.toString());
-    });
-
-    child.stderr.on("data", (data) => {
-      console.error("[render.mjs stderr]", data.toString());
     });
 
     child.on("close", (code) => {
@@ -85,15 +77,12 @@ export async function POST(req: NextRequest) {
     const captionsPath = path.join(tmpDir, `captions-${id}.json`);
     const outPath = path.join(tmpDir, `captioned-${id}.mp4`);
 
-    // write uploaded video to temp
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     await fsPromises.writeFile(videoPath, buffer);
 
-    // write captions JSON
     await fsPromises.writeFile(captionsPath, JSON.stringify(captions));
 
-    // run render.mjs
     await runRenderScript(
       videoPath,
       captionsPath,
@@ -102,10 +91,8 @@ export async function POST(req: NextRequest) {
       durationInSeconds
     );
 
-    // read rendered mp4
     const videoBuffer = await fsPromises.readFile(outPath);
 
-    // best-effort cleanup
     fsPromises.unlink(videoPath).catch(() => {});
     fsPromises.unlink(captionsPath).catch(() => {});
     fsPromises.unlink(outPath).catch(() => {});

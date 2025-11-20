@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // ✅ Use `type` here, not `contentType`
     const openaiFile = await toFile(buffer, file.name || "audio.mp4", {
       type: file.type || "video/mp4",
     });
@@ -34,6 +33,7 @@ export async function POST(req: NextRequest) {
     });
 
     const segments = (transcription as any).segments || [];
+    // console.log("segments", segments);
     const captions = segments.map((seg: any) => ({
       start: seg.start,
       end: seg.end,
