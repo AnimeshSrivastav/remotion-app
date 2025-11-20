@@ -69,8 +69,10 @@ export default function HomePage() {
     if (!res.ok) {
       const errorJson = await res.json().catch(() => null);
       alert(
-        "Render failed: " +
-          (errorJson?.error || `${res.status} ${res.statusText}`)
+        "Cloud export failed (likely due to time/memory limits on the free backend).\n\n" +
+          "Export works locally or via Docker as described in the README.\n\n" +
+          "Details: " +
+          errorJson?.error
       );
       return;
     }

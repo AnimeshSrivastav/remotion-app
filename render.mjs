@@ -200,6 +200,15 @@ async function main() {
                 );
             },
         });
+        log("renderMedia finished, checking output file...");
+
+        try {
+            const stat = await fsPromises.stat(outPath);
+            log("✅ Output file exists. Size:", stat.size, "bytes");
+        } catch (err) {
+            console.error("[render.mjs] ❌ Could not stat output file:", err);
+            throw err;
+        }
 
         log("✅ Render done:", outPath);
     } finally {
