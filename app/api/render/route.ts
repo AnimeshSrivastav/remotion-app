@@ -16,6 +16,7 @@ function runRenderScript(
 ): Promise<void> {
   const scriptPath = path.join(process.cwd(), "render.mjs");
   console.log("Using render script:", scriptPath);
+
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
@@ -32,15 +33,39 @@ function runRenderScript(
       }
     );
 
+    let stderr = "";
+    let stdout = "";
+
     child.stdout.on("data", (data) => {
-      console.log("[render.mjs stdout]", data.toString());
+      const text = data.toString();
+      stdout += text;
+      console.log("[render.mjs stdout]", text.trim());
+    });
+
+    child.stderr.on("data", (data) => {
+      const text = data.toString();
+      stderr += text;
+      console.error("[render.mjs stderr]", text.trim());
     });
 
     child.on("close", (code) => {
       if (code === 0) {
+        console.log("[runRenderScript] render.mjs exited cleanly");
         resolve();
       } else {
-        reject(new Error(`render.mjs exited with code ${code}`));
+        console.error(
+          "[runRenderScript] render.mjs exited with code",
+          code,
+          "stderr:",
+          stderr || "<empty>"
+        );
+        reject(
+          new Error(
+            `render.mjs exited with code ${code}. stderr: ${
+              stderr || "<empty>"
+            }`
+          )
+        );
       }
     });
   });

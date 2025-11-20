@@ -230,9 +230,7 @@ function log(...args) {
     console.log("[render.mjs]", ...args);
 }
 
-/**
- * Start a tiny HTTP server that serves the given video file.
- */
+
 async function startVideoServer(videoPath) {
     log("Starting video server for:", videoPath);
 
