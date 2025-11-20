@@ -1,17 +1,19 @@
-FROM node:22-bookworm-slim AS base
+
+FROM node:20-bookworm-slim AS base
 
 WORKDIR /usr/src/app
 
 FROM base AS deps
 COPY package*.json ./
 RUN npm ci
+
 FROM base AS build
 WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM node:22-bookworm-slim AS runner
+FROM node:20-bookworm-slim AS runner
 
 ENV NODE_ENV=production
 
@@ -36,6 +38,7 @@ RUN apt-get update && apt-get install -y \
     fonts-noto-cjk \
     fonts-noto-color-emoji \
   && rm -rf /var/lib/apt/lists/*
+
 
 COPY --from=build /usr/src/app/.next ./.next
 COPY --from=build /usr/src/app/public ./public
