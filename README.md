@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Remotion Auto-Captioner
 
-## Getting Started
+A full-stack video-captioning application built using **Next.js**, **Remotion**, and **OpenAI Whisper**.  
+Users can upload a `.mp4` video, auto-generate Hinglish captions, preview them in real-time, and export a final captioned video using Remotion’s rendering engine.
 
-First, run the development server:
+---
+
+## Links
+
+**Deployed App:** https://remotion-app-liart.vercel.app/  
+**GitHub Repo:** https://github.com/AnimeshSrivastav/remotion-app  
+**DockerHub Image:** https://hub.docker.com/r/maav3rick/remotion-app
+
+---
+
+# Local Installation
+
+## Running via Docker (Recommended):
+
+DockerHub automated image publishing using **GITHUB ACTIONS**
+
+**Pull the image:**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker pull maav3rick/remotion-app:latest
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Run in container:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+docker run -p 3000:3000 \ -e OPENAI_API_KEY=your_key_here \maav3rick/remotion-app:latest
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Clone the repository
 
-## Learn More
+```bash
+git clone https://github.com/AnimeshSrivastav/remotion-app
+cd remotion-app
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Layer      | Technology                                |
+| ---------- | ----------------------------------------- |
+| Frontend   | React, TypeScript, Next.js App Router     |
+| Video      | Remotion Player + Remotion Renderer       |
+| STT        | OpenAI Whisper (`whisper-1`)              |
+| Deployment | Docker, Vercel, DockerHub, GitHub Actions |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### **1. Auto-Captioning**
+
+- Uses **OpenAI Whisper (`whisper-1`)**
+- Converts Hindi + English (Devanagari + Latin script
+
+### **2. Live Video Preview**
+
+Implemented using **`@remotion/player`** — real-time caption overlay before exporting.
+
+### **3. MP4 Export Using Remotion**
+
+- Uses `@remotion/bundler` + `@remotion/renderer`
+- A tiny internal HTTP server streams uploaded videos to Remotion
+
+### **4. Dockerized for Production**
+
+- Full Docker build
+- DockerHub automated image publishing using **GITHUB ACTIONS**
+
+### **5. CI/CD with GitHub Actions**
+
+Every push triggers:
+
+- Docker build
+- DockerHub publish (`maav3rick/remotion-app:latest`)
+- Deployment-ready artifacts
+
+---
