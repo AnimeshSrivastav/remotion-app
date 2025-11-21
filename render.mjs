@@ -17,7 +17,7 @@ function log(...args) {
  * Start a tiny HTTP server that serves the given video file.
  */
 async function startVideoServer(videoPath) {
-    log("Starting video server for:", videoPath);
+
 
     if (!fs.existsSync(videoPath)) {
         throw new Error("Video file does not exist: " + videoPath);
@@ -75,12 +75,12 @@ async function startVideoServer(videoPath) {
 
                 const stream = fs.createReadStream(videoPath, { start, end });
                 stream.on("error", (err) => {
-                    console.error("[render.mjs] Video stream error:", err);
+
                     res.destroy(err);
                 });
                 stream.pipe(res);
             } catch (err) {
-                console.error("[render.mjs] HTTP server error:", err);
+                console.error("HTTP server error:", err);
                 res.statusCode = 500;
                 res.end("Internal server error");
             }
@@ -107,7 +107,7 @@ async function startVideoServer(videoPath) {
 }
 
 async function main() {
-    log("Process argv:", process.argv);
+
 
     // node render.mjs <videoPath> <captionsPath> <stylePreset> <outPath> <durationSeconds?>
     const [, , videoPath, captionsPath, stylePreset, outPath, durationArg] =
@@ -120,20 +120,14 @@ async function main() {
     }
 
     const durationSecondsFromCli = durationArg ? Number(durationArg) : 0;
-    log("Args parsed:", {
-        videoPath,
-        captionsPath,
-        stylePreset,
-        outPath,
-        durationSecondsFromCli,
-    });
+
 
     if (!fs.existsSync(captionsPath)) {
         throw new Error("Captions file does not exist: " + captionsPath);
     }
 
     const entryPoint = path.join(__dirname, "remotion", "index.tsx");
-    log("Entry point:", entryPoint, "exists?", fs.existsSync(entryPoint));
+
 
     const captionsJson = await fsPromises.readFile(captionsPath, "utf8");
     let captions;
@@ -156,29 +150,19 @@ async function main() {
     };
 
     try {
-        log("Bundling Remotion project...");
+
         const bundleLocation = await bundle({
             entryPoint,
             webpackOverride: (config) => config,
         });
-        log("Bundle created at:", bundleLocation);
 
-        log("Selecting composition:", compositionId);
+
         const composition = await selectComposition({
             serveUrl: bundleLocation,
             id: compositionId,
             inputProps,
         });
 
-        log("Composition loaded:", {
-            id: composition.id,
-            width: composition.width,
-            height: composition.height,
-            fps: composition.fps,
-            durationInFrames: composition.durationInFrames,
-        });
-
-        log("Starting renderMedia...");
 
         const totalFrames = composition.durationInFrames;
 
@@ -188,37 +172,29 @@ async function main() {
             codec: "h264",
             outputLocation: outPath,
             inputProps,
-            // 👇 IMPORTANT: keep load reasonable on tiny Render machine
+
             concurrency: 1,
-            // time limit so we don't hang forever (e.g. 2 minutes)
+
             timeoutInMilliseconds: 2 * 60 * 1000,
             logLevel: "info",
-            onProgress: (progress) => {
-                log(
-                    `Progress: ${progress.renderedFrames}/${totalFrames} frames ` +
-                    `(chunk ${progress.chunk} of ${progress.totalChunks})`
-                );
-            },
         });
-        log("renderMedia finished, checking output file...");
+
 
         try {
             const stat = await fsPromises.stat(outPath);
-            log("✅ Output file exists. Size:", stat.size, "bytes");
+
         } catch (err) {
-            console.error("[render.mjs] ❌ Could not stat output file:", err);
+            console.error("[render.mjs] Could not stat output file:", err);
             throw err;
         }
 
-        log("✅ Render done:", outPath);
     } finally {
-        log("Stopping video server...");
         server.close();
     }
 }
 
 main().catch((err) => {
-    console.error("[render.mjs] ❌ Fatal render error:", err);
+    console.error("[render.mjs] Fatal render error:", err);
     if (err && err.stack) {
         console.error("[render.mjs] Stack:", err.stack);
     }
