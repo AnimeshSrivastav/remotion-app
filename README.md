@@ -7,8 +7,7 @@ Users can upload a `.mp4` video, auto-generate Hinglish captions, preview them i
 
 ## Links
 
-**Deployed App:** https://remotion-app-latest.onrender.com/ 
-
+**Deployed App:** https://remotion-app-latest.onrender.com/     
 **GitHub Repo:** https://github.com/AnimeshSrivastav/remotion-app  
 **DockerHub Image:** https://hub.docker.com/r/maav3rick/remotion-app
 
