@@ -28,7 +28,7 @@ docker pull maav3rick/remotion-app:latest
 **Run in container:**
 
 ```bash
-docker run -p 3000:3000 \ -e OPENAI_API_KEY=your_key_here \maav3rick/remotion-app:latest
+docker run -p 3000:3000 -e OPENAI_API_KEY=your_key_here maav3rick/remotion-app:latest
 ```
 
 ### Clone the repository
