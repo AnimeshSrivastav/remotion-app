@@ -1,14 +1,14 @@
 // app/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
 import { Player } from "@remotion/player";
+import { useEffect, useState } from "react";
+import type { CaptionStylePreset } from "../remotion/VideoWithCaptions";
 import {
-  VideoWithCaptions,
   CaptionSegment,
   fps,
+  VideoWithCaptions,
 } from "../remotion/VideoWithCaptions";
-import type { CaptionStylePreset } from "../remotion/VideoWithCaptions";
 
 type BRollEntry = {
   id: string;

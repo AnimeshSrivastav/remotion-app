@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         .audioCodec("libmp3lame")
         .format("mp3")
         .on("end", () => resolve())
-        .on("error", (err) => reject(err))
+        .on("error", (err: any) => reject(err))
         .save(audioPath);
     });
 
