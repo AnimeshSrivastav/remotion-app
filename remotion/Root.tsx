@@ -6,17 +6,19 @@ import {
   fps,
   CaptionSegment,
   CaptionStylePreset,
+  BRollEntry,
 } from "./VideoWithCaptions";
 
 type InputProps = {
   videoSrc: string;
   captions: CaptionSegment[];
+  bRolls: BRollEntry[];
   stylePreset: CaptionStylePreset;
   durationInSeconds?: number;
 };
 
 export const RemotionRoot: React.FC = () => {
-  const inputProps = getInputProps<InputProps>();
+  const inputProps = getInputProps<InputProps>(); // 👈 Remotion gives props here
 
   const durationInSeconds = inputProps?.durationInSeconds ?? 60;
   const durationInFrames = Math.max(1, Math.round(durationInSeconds * fps));
@@ -30,9 +32,10 @@ export const RemotionRoot: React.FC = () => {
       fps={fps}
       durationInFrames={durationInFrames}
       defaultProps={{
-        videoSrc: "",
-        captions: [] as CaptionSegment[],
-        stylePreset: "bottom" as CaptionStylePreset,
+        videoSrc: inputProps?.videoSrc ?? "",
+        captions: inputProps?.captions ?? [],
+        bRolls: inputProps?.bRolls ?? [],
+        stylePreset: inputProps?.stylePreset ?? "bottom",
       }}
     />
   );

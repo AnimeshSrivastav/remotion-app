@@ -9,13 +9,18 @@
     "render:sample": "node render.mjs ./public/sample-video.mp4 ./remotion/sample-captions.json bottom ./out/sample-captioned.mp4"
   },
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "@remotion/player": "^4.0.376",
+    "ffmpeg-static": "^5.3.0",
+    "fluent-ffmpeg": "^2.1.3",
     "formidable": "^3.5.4",
     "next": "16.0.3",
     "openai": "^6.9.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "remotion": "^4.0.376"
+    "remotion": "^4.0.376",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@remotion/bundler": "^4.0.376",

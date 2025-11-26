@@ -107,7 +107,23 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     await fsPromises.writeFile(videoPath, buffer);
 
-    await fsPromises.writeFile(captionsPath, JSON.stringify(captions));
+    // await fsPromises.writeFile(captionsPath, JSON.stringify(captions));
+    const bRollsStr = formData.get("bRolls") as string | null;
+    let bRolls = [];
+    if (bRollsStr) {
+      try {
+        bRolls = JSON.parse(bRollsStr);
+      } catch (err) {
+        console.error("Failed to parse bRolls JSON:", err);
+      }
+    }
+
+    const payload = {
+      captions,
+      bRolls,
+    };
+
+    await fsPromises.writeFile(captionsPath, JSON.stringify(payload));
 
     await runRenderScript(
       videoPath,
